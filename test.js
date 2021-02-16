@@ -1,23 +1,8 @@
 
+const newThread = new parallelThread(function() {
 
-const myWorker = new PseudoThread(function () {
-
-    let a = 0;
-    for(let i = 0; i < 1000; i++) {
-        a += i;
-    }
-
-    this.postMessage(a);
+    this.get(msg => msg()); //console the message
 
 });
 
-
-myWorker.accessThread(function (worker) {
-
-    worker.onmessage = function (msg) {
-
-        console.log(msg.data);
-
-    }
-
-});
+newThread.send(() => console.log("hello, i am consoled from parallel thread"));
