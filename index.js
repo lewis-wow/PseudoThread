@@ -1,37 +1,22 @@
 class PseudoThread {
 
-    constructor(workerAnonymousFunction) {
+    constructor(workerAnonymousFunction, ...args) {
 
         if (!Worker in window) throw Error(``);
 
-        var blobURL = URL.createObjectURL(new Blob(['(',
-
-            function (workerAnonymousFunction) {
-
-                workerAnonymousFunction();
-
-            }.toString(),
-
-            `)(${ workerAnonymousFunction })`
-        ], {
+        var blobURL = URL.createObjectURL(new Blob([`(${ (fn, ...args) => fn(...args) })(${ workerAnonymousFunction }, ${ args })`], {
             type: 'application/javascript'
         }));
 
-        this._worker = new Worker(blobURL);
+        this.thread = new Worker(blobURL);
 
         return this;
 
     }
 
-    accessThread(callback) {
-
-        callback(this._worker);
-
-    }
-
     disconnect() {
 
-        this._worker.terminate();
+        this.thread.terminate();
 
     }
 
